@@ -47,19 +47,23 @@ namespace UT_GraphicsDemo.Data
                 try
                 {
                     SKCanvas canvas = _surface.Canvas;
-                    canvas.Clear(SKColors.Chocolate);
+                    canvas.Clear(SKColors.PapayaWhip);
 
                     using (SKPaint paint = new SKPaint())
                     {
                         paint.Color = SKColors.Coral;
-                        paint.StrokeWidth = 15;
+                        paint.StrokeWidth = 3;
                         paint.Style = SKPaintStyle.Stroke;
-                        canvas.DrawCircle(50,50,30,paint);
+                        paint.PathEffect = SKPathEffect.CreateDash(new float[] {5.0f,3.0f},0f);
+                        canvas.DrawCircle(150,150,30,paint);
+                        paint.Color = SKColors.Chartreuse;
                         canvas.DrawRoundRect(
                             new SKRoundRect(
-                                new SKRect(10,10,10,10),
-                                10),
+                                new SKRect(150,30,210,100),
+                                8),
                             paint);
+                        paint.Color = SKColors.OrangeRed;
+                        canvas.DrawRect(new SKRect(5,5,100,100),paint);
                     }
 
                     RenderImage();
