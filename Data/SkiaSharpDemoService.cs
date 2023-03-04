@@ -1,7 +1,5 @@
 ﻿using SkiaSharp;
 
-using System.Drawing;
-
 namespace UT_GraphicsDemo.Data
 {
     public class SkiaSharpDemoService
@@ -28,9 +26,13 @@ namespace UT_GraphicsDemo.Data
             using (SKData data = image.Encode(SKEncodedImageFormat.Png, 100))
             using (MemoryStream mStream = new MemoryStream(data.ToArray()))
             {
-                Bitmap bm = new Bitmap(mStream, false);
-                FileStream fs = File.Create("Test.png");
-                bm.Save(fs,System.Drawing.Imaging.ImageFormat.Png);
+                var separator = Path.DirectorySeparatorChar;
+                FileStream fs = File.Create("wwwroot"+separator
+                    +"Images"+separator
+                    +"Test.png");
+                var truc = new System.IO.BinaryWriter(fs);
+                truc.Write(mStream.ToArray());
+                truc.Close();
                 fs.Close();
             }
         }
