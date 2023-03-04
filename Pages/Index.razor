@@ -7,3 +7,19 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+<input name="parameterUserInput" placeholder="Type anything here..." @bind="@Parameter"/>
+<input name="messageUserInput" placeholder="Type anything here..." value="Message"/>
+<button @onclick="appendText">JS Interop call</button>
+
+<div id="p-container"></div>
+
+@inject IJSRuntime JS
+@code {
+    public string Parameter { get; set; }
+
+    public async void appendText()
+    {
+        await JS.InvokeAsync<string>("myJsMethod",Parameter);
+    }
+}

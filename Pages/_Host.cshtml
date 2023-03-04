@@ -30,5 +30,19 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+    <script>
+        function myJsMethod(someString){
+            const userInputElement = document.getElementsByName("messageUserInput")[0];
+            const containerElement = document.getElementById("p-container");
+
+            const message = userInputElement.value;
+            console.log("MGS: "+message);
+
+            var newElement = document.createElement("p");
+            newElement.innerText = someString + ' => ' + message;
+            containerElement.appendChild(newElement);
+            return alert(someString+":"+message);
+        }
+    </script>
 </body>
 </html>
