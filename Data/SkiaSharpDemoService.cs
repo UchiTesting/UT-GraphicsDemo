@@ -29,6 +29,7 @@ namespace UT_GraphicsDemo.Data
                 var separator = Path.DirectorySeparatorChar;
                 FileStream fs = File.Create("wwwroot"+separator
                     +"Images"+separator
+                    +"Output"+separator
                     +"Test.png");
                 var truc = new System.IO.BinaryWriter(fs);
                 truc.Write(mStream.ToArray());
