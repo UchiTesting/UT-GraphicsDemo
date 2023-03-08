@@ -40,17 +40,18 @@ namespace UT_GraphicsDemo.Data
                     FileStream fs = File.Create(path + "Test.png");
                     var truc = new System.IO.BinaryWriter(fs);
                     truc.Write(mStream.ToArray());
+                    Console.WriteLine("Attempting to write image...");
                     truc.Close();
                     fs.Close();
                 }
                 catch (System.IO.DirectoryNotFoundException dnfe)
                 {
-                    System.Console.Error.WriteLine("Directory " + path + " was not found.");
-                    System.Console.Error.WriteLine(dnfe.Message);
+                    System.Console.WriteLine("Directory " + path + " was not found.");
+                    System.Console.WriteLine(dnfe.Message);
                 }
                 catch (System.Exception e)
                 {
-                    System.Console.Error.WriteLine("An exception occurred: \n\t" + e.Message);
+                    System.Console.WriteLine("An exception occurred: \n\t" + e.Message);
                 }
             }
         }
