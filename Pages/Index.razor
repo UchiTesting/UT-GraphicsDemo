@@ -27,16 +27,22 @@ Welcome to your new app.
 
 <button @onclick="draw">draw</button>
 
+@if (imageSource is not null){
+<img src="@imageSource" />
+}
+
 @code {
+    private string? imageSource;
     public async void draw()
     {
         await Task.Run(() =>
         {
             //
             Console.WriteLine("I clicked draw button. Called draw method and display in the server output");
-            new SkiaSharpDemoService().DrawSomething();
+            new SkiaSharpDemoService().DrawSomething().ContinueWith((task)=>{
+                imageSource = "/Images/Output/Test.png";
+            });
+
         });
     }
 }
-
-<img src="Images/Output/Test.png" />

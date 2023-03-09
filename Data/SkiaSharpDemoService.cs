@@ -82,6 +82,10 @@ namespace UT_GraphicsDemo.Data
                             paint);
                         paint.Color = SKColors.OrangeRed;
                         canvas.DrawRect(new SKRect(5, 5, 100, 100), paint);
+
+                        SKImage image = SKImage.FromEncodedData(@"wwwroot/Images/Icon.png");
+                        SKBitmap bm = SKBitmap.FromImage(image);
+                        canvas.DrawBitmap(bm, new SKPoint(60, 30));
                     }
 
                     RenderImage();
