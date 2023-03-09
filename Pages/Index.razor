@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using UT_GraphicsDemo.Data;
 
 <PageTitle>Index</PageTitle>
 
@@ -7,3 +8,61 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+<input name="parameterUserInput" placeholder="Type anything here..." @bind="@Parameter"/>
+<input name="messageUserInput" placeholder="Type anything here..." value="Message"/>
+<button @onclick="appendText">JS Interop call</button>
+
+<div id="p-container"></div>
+
+@inject IJSRuntime JS
+@code {
+    public string? Parameter { get; set; }
+
+    public async void appendText()
+    {
+        await JS.InvokeAsync<string>("myJsMethod",Parameter);
+    }
+}
+
+<button @onclick="draw">draw</button>
+<button @onclick="drawComposite">draw composite</button>
+
+@if (imageSource is not null){
+<img src="@imageSource" />
+}
+
+@if (compositeImageSource is not null){
+<img src="@compositeImageSource" />
+}
+
+@code {
+    private string? imageSource;
+    private string? compositeImageSource;
+
+    public async void draw()
+    {
+        await Task.Run(() =>
+        {
+            //
+            Console.WriteLine("I clicked draw button. Called draw method and display in the server output");
+            new SkiaSharpDemoService().DrawSomething().ContinueWith((task)=>{
+                imageSource = "/Images/Output/Image.png";
+            });
+
+        });
+    }
+
+        public async void drawComposite()
+    {
+        await Task.Run(() =>
+        {
+            //
+            Console.WriteLine("I clicked drawComposite button. Called drawComposite method and display in the server output");
+            new SkiaSharpDemoService().DrawSomethingRefactored().ContinueWith((task)=>{
+                compositeImageSource = "/Images/Output/Composite.png";
+            });
+
+        });
+    }
+}
