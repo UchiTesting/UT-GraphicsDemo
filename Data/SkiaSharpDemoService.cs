@@ -1,4 +1,6 @@
 ﻿using SkiaSharp;
+using System.Linq;
+using UT_GraphicsDemo.Impl;
 
 namespace UT_GraphicsDemo.Data
 {
@@ -37,11 +39,6 @@ namespace UT_GraphicsDemo.Data
 
                 throw;
             }
-        }
-
-        private void RenderImage(SKImage image)
-        {
-
         }
 
         public async Task DrawSomething()
@@ -114,16 +111,15 @@ namespace UT_GraphicsDemo.Data
 
                     graphics.LoadImage("wwwroot/Images/Base.png", _canvas);
 
-                    // 155,24 275, 175
-                    var person1TopLeftCoord = new Impl.Coordinate { X = 155, Y = 24 };
-                    var person1BottomRightCoord = new Impl.Coordinate { X = 275, Y = 175 };
+                    #region Per item treatment
 
-                    graphics.SurroundZone(new Impl.RectBoundaries { TopLeftCorner = person1TopLeftCoord, BottomRightCorner = person1BottomRightCoord }, SKColors.DarkSlateBlue, _canvas);
+                    IList<ItemInfo> info = PrepareItemInfo().ToList();
 
-                    graphics.ApplyIcon(string.Empty, SKColors.White, _canvas,
-                        new Impl.Coordinate { X = person1TopLeftCoord.X, Y = person1BottomRightCoord.Y + 10 },
-                        new Impl.Size { Width = 20, Height = 20 });
-
+                    foreach (var item in info)
+                    {
+                        ProcessItemOnImage(graphics, item);
+                    }
+                    #endregion 
 
                     graphics.RenderImage(_surface.Snapshot(), path, "Composite.png");
                 }
@@ -133,6 +129,56 @@ namespace UT_GraphicsDemo.Data
                     throw;
                 }
             });
+        }
+
+        // private void NewMethod(SkiaAppGraphicsImpl graphics, Coordinate person1TopLeftCoord, Coordinate person1BottomRightCoord)
+        private void ProcessItemOnImage(SkiaAppGraphicsImpl graphics, ItemInfo itemInfo)
+        {
+            graphics.SurroundZone(new Impl.RectBoundaries { TopLeftCorner = itemInfo.Boundaries.TopLeftCorner, BottomRightCorner = itemInfo.Boundaries.BottomRightCorner }, itemInfo.Color, _canvas);
+
+            graphics.ApplyIcon(string.Empty, itemInfo.Color, _canvas,
+                new Impl.Coordinate { X = itemInfo.Boundaries.TopLeftCorner.X, Y = itemInfo.Boundaries.BottomRightCorner.Y + 10 },
+                new Impl.Size { Width = 20, Height = 20 });
+        }
+
+        private IEnumerable<ItemInfo> PrepareItemInfo()
+        {
+
+
+            var p1tl = new Impl.Coordinate { X = 155, Y = 24 };
+            var p1br = new Impl.Coordinate { X = 275, Y = 175 };
+            var p2tl = new Impl.Coordinate { X = 30, Y = 156 };
+            var p2br = new Impl.Coordinate { X = 155, Y = 300 };
+            var p3tl = new Impl.Coordinate { X = 325, Y = 140 };
+            var p3br = new Impl.Coordinate { X = 425, Y = 275 };
+            var p4tl = new Impl.Coordinate { X = 495, Y = 100 };
+            var p4br = new Impl.Coordinate { X = 620, Y = 250 };
+
+            IList<Impl.RectBoundaries> peopleBoundaries = new List<Impl.RectBoundaries>();
+
+            peopleBoundaries.Add(new Impl.RectBoundaries { TopLeftCorner = p1tl, BottomRightCorner = p1br });
+            peopleBoundaries.Add(new Impl.RectBoundaries { TopLeftCorner = p2tl, BottomRightCorner = p2br });
+            peopleBoundaries.Add(new Impl.RectBoundaries { TopLeftCorner = p3tl, BottomRightCorner = p3br });
+            peopleBoundaries.Add(new Impl.RectBoundaries { TopLeftCorner = p4tl, BottomRightCorner = p4br });
+            // 155,24 275, 175
+            // 30,156 155,300
+            // 325,140 424,275
+            // 495,100 620,250
+            IList<SKColor> respectiveColors = new List<SKColor>();
+
+            respectiveColors.Add(SKColors.DarkCyan);
+            respectiveColors.Add(SKColors.OrangeRed);
+            respectiveColors.Add(SKColors.YellowGreen);
+            respectiveColors.Add(SKColors.Purple);
+
+            IList<ItemInfo> itemInfo = new List<ItemInfo>();
+
+            for (int i = 0; i < peopleBoundaries.Count; i++)
+            {
+                itemInfo.Add(new ItemInfo(peopleBoundaries.ElementAt(i), respectiveColors.ElementAt(i)));
+            }
+
+            return itemInfo;
         }
     }
 }
