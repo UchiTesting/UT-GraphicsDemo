@@ -29,6 +29,6 @@ jobs:
           file: ./Dockerfile-amd64
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/graphics-demo:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/graphics-demo:latest-amd64
-            ${{ secrets.DOCKERHUB_USERNAME }}/graphics-demo:${{github.run_number}}-amd64
+            ${{ secrets.DOCKERHUB_USERNAME }}/graphics-demo:latest-debug
+            ${{ secrets.DOCKERHUB_USERNAME }}/graphics-demo:latest-amd64-debug
+            ${{ secrets.DOCKERHUB_USERNAME }}/graphics-demo:${{github.run_number}}-amd64-debug
