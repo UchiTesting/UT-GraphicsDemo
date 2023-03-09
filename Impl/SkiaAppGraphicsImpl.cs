@@ -7,6 +7,10 @@ class SkiaAppGraphicsImpl
     {
         LoadImage("wwwroot/Images/Icon" + iconName + ".png", canvas, origin);
     }
+    public void ApplyIcon(string iconName, SKColor color, SKCanvas canvas, Coordinate origin, Size newSize)
+    {
+        LoadImage("wwwroot/Images/Icon" + iconName + ".png", canvas, newSize, origin);
+    }
 
     public void LoadImage(string imageUrl, SKCanvas canvas)
     {

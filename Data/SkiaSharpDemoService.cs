@@ -114,7 +114,15 @@ namespace UT_GraphicsDemo.Data
 
                     graphics.LoadImage("wwwroot/Images/Base.png", _canvas);
 
-                    graphics.ApplyIcon(string.Empty, SKColors.White, _canvas, new Impl.Coordinate { X = 155, Y = 24 });
+                    // 155,24 275, 175
+                    var person1TopLeftCoord = new Impl.Coordinate { X = 155, Y = 24 };
+                    var person1BottomRightCoord = new Impl.Coordinate { X = 275, Y = 175 };
+
+                    graphics.SurroundZone(new Impl.RectBoundaries { TopLeftCorner = person1TopLeftCoord, BottomRightCorner = person1BottomRightCoord }, SKColors.DarkSlateBlue, _canvas);
+
+                    graphics.ApplyIcon(string.Empty, SKColors.White, _canvas,
+                        new Impl.Coordinate { X = person1TopLeftCoord.X, Y = person1BottomRightCoord.Y + 10 },
+                        new Impl.Size { Width = 20, Height = 20 });
 
 
                     graphics.RenderImage(_surface.Snapshot(), path, "Composite.png");
