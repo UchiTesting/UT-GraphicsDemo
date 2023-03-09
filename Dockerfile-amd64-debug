@@ -16,4 +16,6 @@ RUN dotnet publish "UT-GraphicsDemo.csproj" -c Debug --no-self-contained -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+RUN apt-get update
+RUN apt-get install -y libfontconfig1
 ENTRYPOINT ["dotnet", "UT-GraphicsDemo.dll"]
