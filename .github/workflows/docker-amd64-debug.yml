@@ -1,11 +1,6 @@
 name: Docker Debug Image CI for .NET 7 AMD64
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
-
   # Allow manual run of the pipeline
   workflow_dispatch:
 
