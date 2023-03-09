@@ -5,14 +5,17 @@ namespace UT_GraphicsDemo.Data
     public class SkiaSharpDemoService
     {
         SKSurface _surface;
+        SKImageInfo _fullImageInfo;
+
+        SKCanvas _canvas;
 
         private void InitSurface()
         {
 
             try
             {
-                SKImageInfo _imageInfo = new SKImageInfo(320, 240);
-                _surface = SKSurface.Create(_imageInfo);
+                _fullImageInfo = new SKImageInfo(320, 240);
+                _surface = SKSurface.Create(_fullImageInfo);
             }
             catch (Exception)
             {
@@ -21,39 +24,24 @@ namespace UT_GraphicsDemo.Data
             }
         }
 
-        private void RenderImage()
+        private void InitSurfaceComposite()
         {
-            using (SKImage image = _surface.Snapshot())
-            using (SKData data = image.Encode(SKEncodedImageFormat.Png, 100))
-            using (MemoryStream mStream = new MemoryStream(data.ToArray()))
+
+            try
             {
-                var separator = Path.DirectorySeparatorChar;
-                var path = "wwwroot" + separator
-                    + "Images" + separator
-                    + "Output" + separator;
-
-                if (!Path.Exists(path))
-                    System.IO.Directory.CreateDirectory(path);
-
-                try
-                {
-                    FileStream fs = File.Create(path + "Test.png");
-                    var truc = new System.IO.BinaryWriter(fs);
-                    truc.Write(mStream.ToArray());
-                    Console.WriteLine("Attempting to write image...");
-                    truc.Close();
-                    fs.Close();
-                }
-                catch (System.IO.DirectoryNotFoundException dnfe)
-                {
-                    System.Console.WriteLine("Directory " + path + " was not found.");
-                    System.Console.WriteLine(dnfe.Message);
-                }
-                catch (System.Exception e)
-                {
-                    System.Console.WriteLine("An exception occurred: \n\t" + e.Message);
-                }
+                _fullImageInfo = new SKImageInfo(640, 480);
+                _surface = SKSurface.Create(_fullImageInfo);
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        private void RenderImage(SKImage image)
+        {
+
         }
 
         public async Task DrawSomething()
@@ -64,8 +52,8 @@ namespace UT_GraphicsDemo.Data
 
                 try
                 {
-                    SKCanvas canvas = _surface.Canvas;
-                    canvas.Clear(SKColors.PapayaWhip);
+                    _canvas = _surface.Canvas;
+                    _canvas.Clear(SKColors.PapayaWhip);
 
                     using (SKPaint paint = new SKPaint())
                     {
@@ -73,22 +61,63 @@ namespace UT_GraphicsDemo.Data
                         paint.StrokeWidth = 3;
                         paint.Style = SKPaintStyle.Stroke;
                         paint.PathEffect = SKPathEffect.CreateDash(new float[] { 5.0f, 3.0f }, 0f);
-                        canvas.DrawCircle(150, 150, 30, paint);
+                        _canvas.DrawCircle(150, 150, 30, paint);
                         paint.Color = SKColors.Chartreuse;
-                        canvas.DrawRoundRect(
+                        _canvas.DrawRoundRect(
                             new SKRoundRect(
                                 new SKRect(150, 30, 210, 100),
                                 8),
                             paint);
                         paint.Color = SKColors.OrangeRed;
-                        canvas.DrawRect(new SKRect(5, 5, 100, 100), paint);
+                        _canvas.DrawRect(new SKRect(5, 5, 100, 100), paint);
 
                         SKImage image = SKImage.FromEncodedData(@"wwwroot/Images/Icon.png");
                         SKBitmap bm = SKBitmap.FromImage(image);
-                        canvas.DrawBitmap(bm, new SKPoint(60, 30));
+                        var scaled = bm.Resize(new SKImageInfo(20, 20), SKFilterQuality.High);
+                        _canvas.DrawBitmap(scaled, new SKPoint(60, 30));
+
+                        SKSurface.Create(new SKImageInfo { Width = 20, Height = 20, ColorType = SKImageInfo.PlatformColorType, AlphaType = SKAlphaType.Premul });
                     }
 
-                    RenderImage();
+                    var separator = Path.DirectorySeparatorChar;
+                    var path = "wwwroot" + separator
+                        + "Images" + separator
+                        + "Output" + separator;
+
+                    new SkiaAppGraphicsImpl().RenderImage(_surface.Snapshot(), path);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            });
+        }
+
+        public async Task DrawSomethingRefactored()
+        {
+            await Task.Run(() =>
+            {
+                InitSurfaceComposite();
+
+                try
+                {
+                    _canvas = _surface.Canvas;
+                    _canvas.Clear(SKColors.PapayaWhip);
+
+                    var graphics = new SkiaAppGraphicsImpl();
+
+                    var separator = Path.DirectorySeparatorChar;
+                    var path = "wwwroot" + separator
+                        + "Images" + separator
+                        + "Output" + separator;
+
+                    graphics.LoadImage("wwwroot/Images/Base.png", _canvas);
+
+                    graphics.ApplyIcon(string.Empty, SKColors.White, _canvas, new Impl.Coordinate { X = 155, Y = 24 });
+
+
+                    graphics.RenderImage(_surface.Snapshot(), path, "Composite.png");
                 }
                 catch (Exception)
                 {

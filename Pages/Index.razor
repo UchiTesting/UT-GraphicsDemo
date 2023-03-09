@@ -26,13 +26,20 @@ Welcome to your new app.
 }
 
 <button @onclick="draw">draw</button>
+<button @onclick="drawComposite">draw composite</button>
 
 @if (imageSource is not null){
 <img src="@imageSource" />
 }
 
+@if (compositeImageSource is not null){
+<img src="@compositeImageSource" />
+}
+
 @code {
     private string? imageSource;
+    private string? compositeImageSource;
+
     public async void draw()
     {
         await Task.Run(() =>
@@ -41,6 +48,19 @@ Welcome to your new app.
             Console.WriteLine("I clicked draw button. Called draw method and display in the server output");
             new SkiaSharpDemoService().DrawSomething().ContinueWith((task)=>{
                 imageSource = "/Images/Output/Test.png";
+            });
+
+        });
+    }
+
+        public async void drawComposite()
+    {
+        await Task.Run(() =>
+        {
+            //
+            Console.WriteLine("I clicked drawComposite button. Called drawComposite method and display in the server output");
+            new SkiaSharpDemoService().DrawSomethingRefactored().ContinueWith((task)=>{
+                compositeImageSource = "/Images/Output/Composite.png";
             });
 
         });
