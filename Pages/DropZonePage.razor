@@ -1,0 +1,87 @@
+@page "/dropzone"
+
+@inject IJSRuntime JSRuntime
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+@using System.IO;
+
+<h3>File Drop Zone </h3>
+
+<div @ref="@dropZoneElement" class="drop-zone">
+	<h2>Drop a File</h2>
+	<div @ref="@inputFileContainer">
+		<InputFile OnChange="@OnChange" id="test" style="height:0;width:0;overflow:hidden" multiple/>
+		<label class="uploader-button" for="test">
+			Select a file</label>
+	</div>
+</div>
+
+@code {
+	ElementReference dropZoneElement;
+	ElementReference inputFileContainer;
+
+	IJSObjectReference _module;
+	IJSObjectReference _dropZoneInstance;
+
+	IList<string> imageList = new List<string>();
+
+	string imgSrc;
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+		{
+			if (firstRender){
+				_module = await JSRuntime.InvokeAsync<IJSObjectReference>("import","./js/dropZone.js");
+				_dropZoneInstance = await  _module.InvokeAsync<IJSObjectReference>("initFileDropZone", dropZoneElement,inputFileContainer);
+		}
+	}
+
+	async Task OnChange(InputFileChangeEventArgs e){
+		long maxFileSize = 1024*1024*15;
+		var files = e.GetMultipleFiles();
+
+		foreach (var file in files)
+		{
+			using var stream = file.OpenReadStream(maxFileSize);
+
+			var separator = Path.DirectorySeparatorChar;
+			var dir = env.WebRootPath + separator + "images" + separator + "uploads"+ separator;
+
+			if (!Path.Exists(dir))
+				Directory.CreateDirectory(dir);
+
+			var path = dir + file.Name;
+
+			try {
+
+			FileStream fs = File.Create(path);
+			await stream.CopyToAsync(fs);
+			stream.Close();
+			fs.Close();
+			}
+			catch (Exception except){
+				System.Diagnostics.Trace.WriteLine($"EXCEPTION : ${except.Message}");
+			}
+
+			// Reading files
+			using (FileStream fileStream = File.OpenRead(path))
+			{
+				byte[] array = new byte[fileStream.Length];
+				fileStream.Read(array,0,array.Length);
+
+				imgSrc = "data:"+ file.ContentType + ";base64,"+Convert.ToBase64String(array);
+				imageList.Add(imgSrc);
+			}
+		}
+	}
+
+	public async ValueTask DisposeAsync(){
+		if (_dropZoneInstance != null){
+			await _dropZoneInstance.InvokeVoidAsync("dispose");
+			await _dropZoneInstance.DisposeAsync();
+		}
+
+		if (_module != null){
+			await _module.DisposeAsync(); 
+		}
+	}
+}
+

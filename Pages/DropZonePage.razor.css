@@ -1,0 +1,33 @@
+.drop-zone {
+    padding: 20px;
+    width: 60%;
+    min-height: 200px;
+    border: 2px dashed #0087F7;
+    border-radius: 8px;
+}
+
+.drop-zone.hover {
+    border-style: solid;
+}
+
+
+/*/////////////////////////////////////*/
+
+.file-input,
+label {
+    background: linear-gradient(80deg, #0087F7, #d30b2c);
+    border: none;
+    border-radius: 30px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: inherit;
+    padding: 0.8rem 1.5rem;
+    position: relative;
+    vertical-align: middle;
+}
+
+.file-input:hover,
+label:hover {
+    background-color: darken(#f15d22, 10%);
+}
