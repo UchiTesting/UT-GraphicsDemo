@@ -9,7 +9,7 @@
 <div @ref="@dropZoneElement" class="drop-zone">
 	<h2>Drop a File</h2>
 	<div @ref="@inputFileContainer">
-		<InputFile OnChange="@OnChange" id="test" style="height:0;width:0;overflow:hidden" multiple/>
+		<InputFile OnChange="@OnChange" id="test" style="height:0;width:0;overflow:hidden"/>
 		<label class="uploader-button" for="test">
 			Select a file</label>
 	</div>
@@ -36,10 +36,9 @@
 
 	async Task OnChange(InputFileChangeEventArgs e){
 		long maxFileSize = 1024*1024*15;
-		var files = e.GetMultipleFiles();
+		var file = e.File;
 
-		foreach (var file in files)
-		{
+	
 			using var stream = file.OpenReadStream(maxFileSize);
 
 			var separator = Path.DirectorySeparatorChar;
@@ -70,7 +69,7 @@
 				imgSrc = "data:"+ file.ContentType + ";base64,"+Convert.ToBase64String(array);
 				imageList.Add(imgSrc);
 			}
-		}
+		
 	}
 
 	public async ValueTask DisposeAsync(){
